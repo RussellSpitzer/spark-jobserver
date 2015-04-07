@@ -75,8 +75,8 @@ export SPARK_HOME
 
 # job server jar needs to appear first so its deps take higher priority
 # need to explicitly include app dir in classpath so logging configs can be found
-CLASSPATH="$appdir:$appdir/spark-job-server.jar:$($SPARK_HOME/bin/compute-classpath.sh)"
+#CLASSPATH="$appdir:$appdir/spark-job-server.jar:$($SPARK_HOME/bin/compute-classpath.sh)"
 
 #exec java -cp $CLASSPATH $GC_OPTS $JAVA_OPTS $LOGGING_OPTS $CONFIG_OVERRIDES $MAIN $conffile 2>&1 &
-dse spark-submit --class $MAIN $appdir/spark-job-server.jar $GC_OPTS $JAVA_OPTS $LOGGING_OPTS $conffile 2>&1 &
+dse spark-submit --class $MAIN $appdir/spark-job-server.jar --driver-java-options "$GC_OPTS $JAVA_OPTS $LOGGING_OPTS" $conffile 2>&1 &
 echo $! > $PIDFILE
