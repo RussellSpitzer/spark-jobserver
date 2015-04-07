@@ -36,18 +36,18 @@ else
   echo "Missing $appdir/settings.sh, exiting"
   exit 1
 fi
-
-if [ -z "$SPARK_HOME" ]; then
-  echo "Please set SPARK_HOME or put it in $appdir/settings.sh first"
-  exit 1
-fi
-
-if [ -z "$SPARK_CONF_DIR" ]; then
-  SPARK_CONF_DIR=$SPARK_HOME/conf
-fi
-
+#Comment out Spark stuff since we're submitting through spark-submit
+#if [ -z "$SPARK_HOME" ]; then
+#  echo "Please set SPARK_HOME or put it in $appdir/settings.sh first"
+#  exit 1
+#fi
+#
+#if [ -z "$SPARK_CONF_HOME" ]; then
+#  SPARK_CONF_HOME=$SPARK_HOME/conf
+#fi
+#
 # Pull in other env vars in spark config, such as MESOS_NATIVE_LIBRARY
-. $SPARK_CONF_DIR/spark-env.sh
+#. $SPARK_CONF_HOME/spark-env.sh
 
 if [ -f "$PIDFILE" ] && kill -0 $(cat "$PIDFILE"); then
    echo 'Job server is already running'
@@ -77,5 +77,6 @@ export SPARK_HOME
 # need to explicitly include app dir in classpath so logging configs can be found
 CLASSPATH="$appdir:$appdir/spark-job-server.jar:$($SPARK_HOME/bin/compute-classpath.sh)"
 
-exec java -cp $CLASSPATH $GC_OPTS $JAVA_OPTS $LOGGING_OPTS $CONFIG_OVERRIDES $MAIN $conffile 2>&1 &
+#exec java -cp $CLASSPATH $GC_OPTS $JAVA_OPTS $LOGGING_OPTS $CONFIG_OVERRIDES $MAIN $conffile 2>&1 &
+dse spark-submit --class $MAIN $appdir/spark-job-server.jar $GC_OPTS $JAVA_OPTS $LOGGING_OPTS $conffile 2>&1 &
 echo $! > $PIDFILE

@@ -115,6 +115,8 @@ object JobServerBuild extends Build {
     scalacOptions := Seq("-deprecation", "-feature",
                          "-language:implicitConversions", "-language:postfixOps"),
     resolvers    ++= Dependencies.repos,
+    unmanagedClasspath in Compile ++= dseDeps,
+    unmanagedClasspath in Test ++= dseDeps,
     libraryDependencies ++= apiDeps,
     parallelExecution in Test := false,
     // We need to exclude jms/jmxtools/etc because it causes undecipherable SBT errors  :(

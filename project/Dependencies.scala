@@ -28,13 +28,30 @@ object Dependencies {
   ) ++ yodaDeps
 
   lazy val sparkDeps = Seq(
-    "org.apache.spark" %% "spark-core" % "1.2.0" % "provided" exclude(
-                                            "io.netty", "netty-all") excludeAll(excludeQQ),
-    "org.apache.spark" %% "spark-sql" % "1.2.0" % "provided" exclude(
-                                            "io.netty", "netty-all") excludeAll(excludeQQ),
+    //"org.apache.spark" %% "spark-core" % "1.2.0" % "provided" exclude(
+    //                                        "io.netty", "netty-all") excludeAll(excludeQQ),
+    //"org.apache.spark" %% "spark-sql" % "1.2.0" % "provided" exclude(
+    //                                        "io.netty", "netty-all") excludeAll(excludeQQ),
     // Force netty version.  This avoids some Spark netty dependency problem.
     "io.netty" % "netty-all" % "4.0.23.Final"
   )
+  
+  val sysHome = System.getenv.get("DSE_HOME")
+  val DSE_HOME = if (sysHome == null) System.getenv.get("HOME") + "/dse" else sysHome
+  
+  lazy val finder: PathFinder = (
+    file(DSE_HOME + "/lib") ** "*.jar" +++
+    file(DSE_HOME + "/resources/dse/lib") ** "*.jar" +++
+    file(DSE_HOME + "/resources/driver/lib") ** "*.jar" +++
+    file(DSE_HOME + "/resources/cassandra/lib") ** "*.jar" +++
+    file(DSE_HOME + "/resources/spark/lib") ** "*.jar" +++
+    file(DSE_HOME + "/resources/shark/lib") ** "*.jar" +++
+    file(DSE_HOME + "/resources/hadoop/") ** "*.jar" +++
+    file(DSE_HOME + "/resources/hadoop/lib/") ** "*.jar" +++
+    file(DSE_HOME + "/build/") ** "*.jar"
+  ).filter( f => !f.name.contains("joda"))
+
+  lazy val dseDeps = finder.classpath
 
   lazy val slickDeps = Seq(
     "com.typesafe.slick" %% "slick" % "2.0.2-RC1",
